@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "GrpcService1";
+
+package Todo;
+
+service Todos{	
+	rpc GetTodos (EmptyRequest) returns (TodoList);
+	rpc GetTodoByID (TodoModel) returns (RPCResponse);
+	rpc GetTodoByName (TodoModel) returns (RPCResponse);
+	rpc InsertTodo (TodoRequest) returns (RPCResponse);
+	rpc updateTodo (TodoRequest) returns (RPCResponse);
+	rpc DeleteTodo (TodoRequest) returns (RPCResponse);
+
+}
+
+
+message TodoList{
+	repeated TodoModel list = 1;
+}
+
+message TodoModel{
+	int32 ID=1;
+	string name=2;
+	bool status=3;
+	google.protobuf.Timestamp CreatedDate=4;
+}
+
+message EmptyRequest{}
+
+message RPCResponse{
+	bool isDone=1;
+	TodoModel model =2;
+}
+
+message TodoRequest{
+	TodoModel model=1;
+}
+
+
+// The response message containing the greetings.
+message TodoReply {
+  string message = 1;
+}
