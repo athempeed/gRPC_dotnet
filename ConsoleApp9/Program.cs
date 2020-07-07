@@ -19,174 +19,172 @@ namespace ConsoleApp9
             int choice =-1;
             TodoList reply = new TodoList();
             string name = "";
-            using (var channel = GrpcChannel.ForAddress("https://localhost:5001"))
+            while (choice != 0)
             {
-                while(choice!=0)
+                Console.WriteLine("\n\n------------------------------\n\n");
+                Console.WriteLine("1. all todos");
+                Console.WriteLine("2. Todo by ID");
+                Console.WriteLine("3. Todo by Status");
+                Console.WriteLine("4. Todo by Name");
+                Console.WriteLine("5. Create Todo");
+                Console.WriteLine("6. Update Todo");
+                Console.WriteLine("7. Delete Todo");
+                Console.WriteLine("0. Exit");
+                Console.WriteLine("\n\n------------------------------\n\n");
+                choice = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("\n\n");
+                switch (choice)
                 {
-                    Console.WriteLine("\n\n------------------------------\n\n");
-                    Console.WriteLine("1. all todos");
-                    Console.WriteLine("2. Todo by ID");
-                    Console.WriteLine("3. Todo by Status");
-                    Console.WriteLine("4. Todo by Name");
-                    Console.WriteLine("5. Create Todo");
-                    Console.WriteLine("6. Update Todo");
-                    Console.WriteLine("7. Delete Todo");
-                    Console.WriteLine("0. Exit");
-                    Console.WriteLine("\n\n------------------------------\n\n");
-                    choice = Convert.ToInt32(Console.ReadLine());
-                    Console.WriteLine("\n\n");
-                    switch (choice)
-                    {
-                        case 1:
-                            reply  = await GetTodos();
-                            if (reply != null && reply.List != null && reply.List.Count > 0)
+                    case 1:
+                        reply = await GetTodos();
+                        if (reply != null && reply.List != null && reply.List.Count > 0)
+                        {
+                            reply.List.ToList().ForEach(r =>
                             {
-                                reply.List.ToList().ForEach(r =>
-                                {
-                                    ShowTodo(r);   
-                                });
-                            }
-                            else
-                            {
-                                Console.WriteLine("you do not have any todos");
-                            }
-                            break;
-                        case 2:
-                            Console.WriteLine("Enter Id to search:");
-                            int id = Convert.ToInt32(Console.ReadLine());
-                            var todo = await GetTodoByID(new TodoModel { ID = id });
-                            if(todo != null)
-                            {
-                                ShowTodo(todo);
-                            }
-                            else
-                            {
-                                Console.WriteLine("you do not have Todo");
-                            }
-                            
-                            break;
-                        case 3:
-                            Console.WriteLine("Enter status to search:");
-                            bool status = Convert.ToBoolean(Console.ReadLine());
-                            reply = await GetTodoByStatus(new TodoModel { Status = status });
-                            if (reply != null && reply.List != null && reply.List.Count > 0)
-                            {
-                                reply.List.ToList().ForEach(r =>
-                                {
-                                    ShowTodo(r);
-                                });
-                            }
-                            else
-                            {
-                                Console.WriteLine("you do not have Todo");
-                            }
-                            break;
-                        case 4:
-                            Console.WriteLine("Enter name to search:");
-                            name = Console.ReadLine();
-                            todo = await GetTodoByName(new TodoModel { Name = name });
-                            if(todo != null)
-                            {
-                                ShowTodo(todo);
-                            }
-                            else
-                            {
-                                Console.WriteLine("you do not have todo");
-                            }
-                            break;
-                        case 5:
-                            Console.WriteLine("Enter Todo");
-                             name = Console.ReadLine();
-                            var result =  await InsertTodo(name);
+                                ShowTodo(r);
+                            });
+                        }
+                        else
+                        {
+                            Console.WriteLine("you do not have any todos");
+                        }
+                        break;
+                    case 2:
+                        Console.WriteLine("Enter Id to search:");
+                        int id = Convert.ToInt32(Console.ReadLine());
+                        var todo = await GetTodoByID(new TodoModel { ID = id });
+                        if (todo != null)
+                        {
+                            ShowTodo(todo);
+                        }
+                        else
+                        {
+                            Console.WriteLine("you do not have Todo");
+                        }
 
+                        break;
+                    case 3:
+                        Console.WriteLine("Enter status to search:");
+                        bool status = Convert.ToBoolean(Console.ReadLine());
+                        reply = await GetTodoByStatus(new TodoModel { Status = status });
+                        if (reply != null && reply.List != null && reply.List.Count > 0)
+                        {
+                            reply.List.ToList().ForEach(r =>
+                            {
+                                ShowTodo(r);
+                            });
+                        }
+                        else
+                        {
+                            Console.WriteLine("you do not have Todo");
+                        }
+                        break;
+                    case 4:
+                        Console.WriteLine("Enter name to search:");
+                        name = Console.ReadLine();
+                        todo = await GetTodoByName(new TodoModel { Name = name });
+                        if (todo != null)
+                        {
+                            ShowTodo(todo);
+                        }
+                        else
+                        {
+                            Console.WriteLine("you do not have todo");
+                        }
+                        break;
+                    case 5:
+                        Console.WriteLine("Enter Todo");
+                        name = Console.ReadLine();
+                        var result = await InsertTodo(name);
+
+                        if (result)
+                        {
+                            Console.WriteLine("Todo inseted successfully");
+                        }
+                        else
+                        {
+                            Console.WriteLine("there is some proplem. Please try again later");
+                        }
+                        break;
+                    case 6:
+                        Console.WriteLine("Search for the Toto with ID");
+                        id = Convert.ToInt32(Console.ReadLine());
+                        todo = await GetTodoByID(new TodoModel { ID = id });
+                        if (todo != null)
+                        {
+                            ShowTodo(todo);
+                        }
+                        Console.WriteLine("Choose option to update Todo");
+                        Console.WriteLine("A. Update Name");
+                        Console.WriteLine("B. Update Statue");
+                        char opt = Convert.ToChar(Console.ReadLine());
+                        switch (opt)
+                        {
+                            case 'A':
+                            case 'a':
+                                Console.WriteLine("enter name to update");
+                                var newName = Console.ReadLine();
+                                todo.Name = newName;
+                                result = await UpdateTodo(todo);
+                                break;
+                            case 'B':
+                            case 'b':
+                                Console.WriteLine("enter status to update");
+                                var newStatus = Console.ReadLine();
+                                todo.Status = Convert.ToBoolean(newStatus);
+                                result = await UpdateTodo(todo);
+                                break;
+                            default:
+                                result = false;
+                                Console.WriteLine("choose right option");
+                                break;
+
+                        }
+                        if (result)
+                        {
+                            Console.WriteLine("Todo updated successfully");
+                        }
+                        else
+                        {
+                            Console.WriteLine("there is some proplem. Please try again later");
+                        }
+                        break;
+                    case 7:
+                        Console.WriteLine("Search for the Toto with ID");
+                        id = Convert.ToInt32(Console.ReadLine());
+                        todo = await GetTodoByID(new TodoModel { ID = id });
+                        if (todo != null)
+                        {
+                            ShowTodo(todo);
+                        }
+                        Console.WriteLine("are you sure you want to delete this Todo?press A for yes.");
+                        opt = Convert.ToChar(Console.ReadLine());
+                        if (opt == 'A' || opt == 'a')
+                        {
+                            result = await DeleteTodo(todo);
                             if (result)
                             {
-                                Console.WriteLine("Todo inseted successfully");
+                                Console.WriteLine("Todo deleted successfully");
                             }
                             else
                             {
                                 Console.WriteLine("there is some proplem. Please try again later");
                             }
-                            break;
-                        case 6:
-                            Console.WriteLine("Search for the Toto with ID");
-                            id = Convert.ToInt32(Console.ReadLine());
-                            todo = await GetTodoByID(new TodoModel { ID = id });
-                            if(todo != null)
-                            {
-                                ShowTodo(todo);
-                            }
-                            Console.WriteLine("Choose option to update Todo");
-                            Console.WriteLine("A. Update Name");
-                            Console.WriteLine("B. Update Statue");
-                            char opt =Convert.ToChar(Console.ReadLine());
-                            switch (opt)
-                            {
-                                case 'A' : case 'a':
-                                    Console.WriteLine("enter name to update");
-                                    var newName = Console.ReadLine();
-                                    todo.Name = newName;
-                                    result = await UpdateTodo(todo);
-                                    break;
-                                case 'B': case 'b':
-                                    Console.WriteLine("enter status to update");
-                                    var newStatus = Console.ReadLine();
-                                    todo.Status= Convert.ToBoolean(newStatus);
-                                    result = await UpdateTodo(todo);
-                                    break;
-                                default:
-                                    result = false;
-                                    Console.WriteLine("choose right option");
-                                    break;
-
-                            }
-                            if (result)
-                            {
-                                Console.WriteLine("Todo updated successfully");
-                            }
-                            else
-                            {
-                                Console.WriteLine("there is some proplem. Please try again later");
-                            }
-                            break;
-                        case 7:
-                            Console.WriteLine("Search for the Toto with ID");
-                            id = Convert.ToInt32(Console.ReadLine());
-                            todo = await GetTodoByID(new TodoModel { ID = id });
-                            if (todo != null)
-                            {
-                                ShowTodo(todo);
-                            }
-                            Console.WriteLine("are you sure you want to delete this Todo?press A for yes.");
-                            opt = Convert.ToChar(Console.ReadLine());
-                            if (opt =='A' || opt =='a') 
-                            {
-                                result = await DeleteTodo(todo);
-                                if (result)
-                                {
-                                    Console.WriteLine("Todo deleted successfully");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("there is some proplem. Please try again later");
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("Todo item not deleted");
-                            }
-                            break;
-                        case 0:
-                            Console.WriteLine("Exited....");
-                            break;
-                        default:
-                            Console.WriteLine("Select right option....");
-                            break;
-                    }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Todo item not deleted");
+                        }
+                        break;
+                    case 0:
+                        Console.WriteLine("Exited....");
+                        break;
+                    default:
+                        Console.WriteLine("Select right option....");
+                        break;
                 }
-                
-
             }
+
             Console.ReadLine();
         }        
         public static async Task<TodoList> GetTodos()
