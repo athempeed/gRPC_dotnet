@@ -26,8 +26,7 @@ namespace GrpcService1
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGrpcService<GreeterService>();
+            {                
                 endpoints.MapGrpcService<TodoService>();
 
                 endpoints.MapGet("/", async context =>
